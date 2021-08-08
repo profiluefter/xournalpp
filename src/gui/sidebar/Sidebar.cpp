@@ -5,6 +5,7 @@
 #include "control/Control.h"
 #include "control/PdfCache.h"
 #include "gui/GladeGui.h"
+#include "gui/sidebar/structure/SidebarStructure.h"
 #include "indextree/SidebarIndexPage.h"
 #include "model/Document.h"
 #include "model/XojPage.h"
@@ -25,6 +26,7 @@ Sidebar::Sidebar(GladeGui* gui, Control* control): toolbar(this, gui), control(c
 void Sidebar::initPages(GtkWidget* sidebarContents, GladeGui* gui) {
     addPage(new SidebarIndexPage(this->control, &this->toolbar));
     addPage(new SidebarPreviewPages(this->control, this->gui, &this->toolbar));
+    addPage(new SidebarStructure(this->control, &this->toolbar));
     addPage(new SidebarPreviewLayers(this->control, this->gui, &this->toolbar, false));
     addPage(new SidebarPreviewLayers(this->control, this->gui, &this->toolbar, true));
 
