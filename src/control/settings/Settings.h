@@ -190,6 +190,9 @@ public:
     void setLastImagePath(const fs::path& p);
     fs::path const& getLastImagePath() const;
 
+    void setStructureRootFolder(const fs::path& path);
+    fs::path const& getStructureRootFolder() const;
+
     void setMainWndSize(int width, int height);
     void setMainWndMaximized(bool max);
     int getMainWndWidth() const;
@@ -658,6 +661,11 @@ private:
      *  The last "insert image" folder
      */
     fs::path lastImagePath;
+
+    /**
+     * The root folder of the structure sidebar
+     */
+    fs::path structureRootFolder;
 
     /**
      * The last used font

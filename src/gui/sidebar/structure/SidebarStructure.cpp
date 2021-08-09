@@ -32,7 +32,7 @@ SidebarStructure::SidebarStructure(Control* control, SidebarToolbar* toolbar):
             3, G_TYPE_STRING /* file name */, G_TYPE_BOOLEAN /* is file */, G_TYPE_STRING /* absolute path */));
 
     GtkTreeIter rootNode = {0};
-    const fs::path& rootPath = fs::path("/tmp/xournal-example");  // TODO(profiluefter): Add config option
+    const fs::path& rootPath = control->getSettings()->getStructureRootFolder();
     gtk_tree_store_insert_with_values(GTK_TREE_STORE(model), &rootNode, nullptr, -1, 0, rootPath.filename().c_str(), 1,
                                       false, 2, absolute(rootPath).c_str(), -1);
 

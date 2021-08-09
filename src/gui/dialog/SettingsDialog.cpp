@@ -518,6 +518,9 @@ void SettingsDialog::load() {
     loadCheckbox("cbHidePresentationSidebar", hidePresentationSidebar);
     loadCheckbox("cbHideMenubarStartup", settings->isMenubarVisible());
 
+    GtkWidget* structureRootFolderFileChooser = get("fcStructureRoot");
+    gtk_file_chooser_set_file(GTK_FILE_CHOOSER(structureRootFolderFileChooser), g_file_new_for_path(settings->getStructureRootFolder().c_str()), nullptr);
+
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(get("preloadPagesBefore")),
                               static_cast<double>(settings->getPreloadPagesBefore()));
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(get("preloadPagesAfter")),
@@ -754,6 +757,8 @@ void SettingsDialog::save() {
                                                            hidePresentationMenubar, hidePresentationSidebar));
 
     settings->setMenubarVisible(getCheckbox("cbHideMenubarStartup"));
+
+    settings->setStructureRootFolder(g_file_get_path(gtk_file_chooser_get_file(GTK_FILE_CHOOSER(get("fcStructureRoot")))));
 
     constexpr auto spinAsUint = [&](GtkSpinButton* btn) {
         int v = gtk_spin_button_get_value_as_int(btn);

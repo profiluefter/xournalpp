@@ -82,6 +82,8 @@ void Settings::loadDefault() {
     this->autoloadMostRecent = false;
     this->autoloadPdfXoj = true;
 
+    this->structureRootFolder = fs::path();
+
     this->stylusCursorType = STYLUS_CURSOR_DOT;
     this->highlightPosition = false;
     this->cursorHighlightColor = 0x80FFFF00;  // Yellow with 50% opacity
@@ -337,6 +339,8 @@ void Settings::parseItem(xmlDocPtr doc, xmlNodePtr cur) {
         this->lastOpenPath = fs::u8path(reinterpret_cast<const char*>(value));
     } else if (xmlStrcmp(name, reinterpret_cast<const xmlChar*>("lastImagePath")) == 0) {
         this->lastImagePath = fs::u8path(reinterpret_cast<const char*>(value));
+    } else if (xmlStrcmp(name, reinterpret_cast<const xmlChar*>("structureRootFolder")) == 0) {
+        this->structureRootFolder = fs::u8path(reinterpret_cast<const char*>(value));
     } else if (xmlStrcmp(name, reinterpret_cast<const xmlChar*>("edgePanSpeed")) == 0) {
         this->edgePanSpeed = tempg_ascii_strtod(reinterpret_cast<const char*>(value), nullptr);
     } else if (xmlStrcmp(name, reinterpret_cast<const xmlChar*>("edgePanMaxMult")) == 0) {
@@ -809,6 +813,9 @@ void Settings::save() {
     SAVE_STRING_PROP(lastSavePath);
     SAVE_STRING_PROP(lastOpenPath);
     SAVE_STRING_PROP(lastImagePath);
+
+    auto structureRootFolder = this->structureRootFolder.u8string();
+    SAVE_STRING_PROP(structureRootFolder);
 
     SAVE_DOUBLE_PROP(edgePanSpeed);
     SAVE_DOUBLE_PROP(edgePanMaxMult);
@@ -1539,6 +1546,16 @@ void Settings::setLastImagePath(const fs::path& path) {
 }
 
 auto Settings::getLastImagePath() const -> fs::path const& { return this->lastImagePath; }
+
+void Settings::setStructureRootFolder(const fs::path& path) {
+    if (this->structureRootFolder == path) {
+        return;
+    }
+    this->structureRootFolder = path;
+    save();
+}
+
+auto Settings::getStructureRootFolder() const -> fs::path const& { return this->structureRootFolder; }
 
 void Settings::setZoomStep(double zoomStep) {
     if (this->zoomStep == zoomStep) {

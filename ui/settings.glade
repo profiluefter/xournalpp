@@ -706,6 +706,55 @@ If the file was not yet saved you can find it in your home directory, in ~/.xour
                                 <property name="position">2</property>
                               </packing>
                             </child>
+                            <child>
+                              <object class="GtkFrame" id="sid5">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="label-xalign">0</property>
+                                <child>
+                                  <object class="GtkAlignment" id="sid6">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="bottom-padding">8</property>
+                                    <property name="left-padding">12</property>
+                                    <property name="right-padding">12</property>
+                                    <child>
+                                      <object class="GtkBox" id="sid7">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="orientation">vertical</property>
+                                        <child>
+                                          <object class="GtkFileChooserButton" id="fcStructureRoot">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Here you can specify the folder whose content to display in the "Structure" sidebar.</property>
+                                            <property name="action">select-folder</property>
+                                            <property name="title" translatable="yes"/>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child type="label">
+                                  <object class="GtkLabel" id="sid8">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="label" translatable="yes">Structure Root Folder</property>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">3</property>
+                              </packing>
+                            </child>
                           </object>
                         </child>
                       </object>
