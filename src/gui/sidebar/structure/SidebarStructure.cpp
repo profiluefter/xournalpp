@@ -23,18 +23,25 @@ SidebarStructure::SidebarStructure(Control* control, SidebarToolbar* toolbar):
     gtk_tree_view_column_set_expand(GTK_TREE_VIEW_COLUMN(column), true);
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeViewStructure), column);
 
-    auto* renderer = static_cast<GtkCellRenderer*>(
+    auto* renderer = static_cast<GtkCellRenderer*>(gtk_cell_renderer_pixbuf_new());
+    gtk_tree_view_column_pack_start(GTK_TREE_VIEW_COLUMN(column), renderer, false);
+    gtk_tree_view_column_set_attributes(GTK_TREE_VIEW_COLUMN(column), renderer, "pixbuf", 3, nullptr);
+
+    renderer = static_cast<GtkCellRenderer*>(
             g_object_new(GTK_TYPE_CELL_RENDERER_TEXT, "ellipsize", PANGO_ELLIPSIZE_END, nullptr));
     gtk_tree_view_column_pack_start(GTK_TREE_VIEW_COLUMN(column), renderer, true);
     gtk_tree_view_column_set_attributes(GTK_TREE_VIEW_COLUMN(column), renderer, "text", 0, nullptr);
 
-    auto* model = reinterpret_cast<GtkTreeModel*>(gtk_tree_store_new(
-            3, G_TYPE_STRING /* file name */, G_TYPE_BOOLEAN /* is file */, G_TYPE_STRING /* absolute path */));
+    auto* model = reinterpret_cast<GtkTreeModel*>(
+            gtk_tree_store_new(4, G_TYPE_STRING /* file name */, G_TYPE_BOOLEAN /* is file */,
+                               G_TYPE_STRING /* absolute path */, GDK_TYPE_PIXBUF /* icon */));
 
     GtkTreeIter rootNode = {0};
     const fs::path& rootPath = control->getSettings()->getStructureRootFolder();
+    GdkPixbuf* folderIcon = gtk_icon_theme_load_icon(gtk_icon_theme_get_default(), "folder", GTK_ICON_SIZE_MENU,
+                                                     static_cast<GtkIconLookupFlags>(0), nullptr);
     gtk_tree_store_insert_with_values(GTK_TREE_STORE(model), &rootNode, nullptr, -1, 0, rootPath.filename().c_str(), 1,
-                                      false, 2, absolute(rootPath).c_str(), -1);
+                                      false, 2, absolute(rootPath).c_str(), 3, folderIcon, -1);
 
     // TODO(profiluefter): Maybe watch folder for changes
     populateTree(model, &rootNode, rootPath);
@@ -101,10 +108,17 @@ bool SidebarStructure::treeNodeSelected(GtkWidget* treeView, SidebarStructure* s
 
 void SidebarStructure::populateTree(GtkTreeModel* model, GtkTreeIter* parent, const fs::path& path) {
     for (const auto& file: fs::directory_iterator(path)) {
+        if (file.path().filename().string()[0] == '.')  // ignore hidden files
+            continue;
+
         GtkTreeIter fileNode = {0};
+        // TODO(profiluefter): Look at other icons to see if this is normally handled differently
+        GdkPixbuf* icon = gtk_icon_theme_load_icon(
+                gtk_icon_theme_get_default(), file.is_directory() || file.is_symlink() ? "folder" : "text-x-generic",
+                GTK_ICON_SIZE_MENU, static_cast<GtkIconLookupFlags>(0), nullptr);
         gtk_tree_store_insert_with_values(GTK_TREE_STORE(model), &fileNode, parent, -1, 0,
                                           file.path().filename().c_str(), 1, file.is_regular_file(), 2,
-                                          absolute(file.path()).c_str(), -1);
+                                          absolute(file.path()).c_str(), 3, icon, -1);
         // TODO(profiluefter): Prevent infinite recursion when symlinks are looped
         if (file.is_directory() || file.is_symlink())
             populateTree(model, &fileNode, file.path());
